@@ -20,6 +20,15 @@ RUN npm run build
 # nginx-unprivileged : nginx officiel prévu pour tourner sans root (UID 101).
 FROM nginxinc/nginx-unprivileged:1.31-alpine3.24@sha256:b5047b9b76845eac124358373c6852377c52e4b05834a47647e955dd91cb8f1e
 
+# Durcissement de l'image :
+# - apk upgrade : correctifs de sécurité Alpine publiés depuis l'image de base ;
+# - suppression de curl et du gestionnaire de paquets apk, inutiles à l'exécution.
+# Passage temporaire en root, seul moment où c'est nécessaire.
+USER root
+RUN apk upgrade --no-cache \
+  && apk del --no-cache curl \
+  && apk --purge del apk-tools
+
 # Configuration du serveur : fichiers statiques + reverse proxy vers le backend.
 # Elle remplace le default.conf de l'image.
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf

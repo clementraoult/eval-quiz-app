@@ -7,8 +7,10 @@ name: quiz-app
 services:
   # ---------- Base de données ----------
   db:
-    # Version épinglée par tag précis et digest
-    image: postgres:18.7-alpine3.24@sha256:b6972e1115a4ff8eba5d7f7d19184926d1e16d7d1136ae1e1a7ebf286da0f015
+    # Image officielle épinglée, durcie dans database/Dockerfile (sans gosu, schéma intégré)
+    build:
+      context: ./database
+    image: quiz-db:local
     environment:
       POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER doit être défini dans .env}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD doit être défini dans .env}
@@ -18,8 +20,8 @@ services:
       # PostgreSQL 18 : le point de montage est /var/lib/postgresql
       # (PGDATA=/var/lib/postgresql/18/docker), et non plus /var/lib/postgresql/data.
       - pgdata:/var/lib/postgresql
-      # Schéma exécuté une seule fois, au premier démarrage sur un volume vide.
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      # Le schéma database/init.sql est copié dans l'image : il est exécuté une seule
+      # fois, au premier démarrage sur un volume vide.
     # Pas de "ports:" : la base n'est joignable que par le backend, sur le réseau du projet.
     healthcheck:
       # $$ : la variable est lue dans le conteneur, pas remplacée par Compose.
@@ -30,16 +32,10 @@ services:
       start_period: 10s
     security_opt:
       - no-new-privileges:true
+    # Le conteneur démarre directement avec l'utilisateur postgres (USER de l'image) :
+    # aucune capacité Linux n'est nécessaire.
     cap_drop:
       - ALL
-    cap_add:
-      # Minimum nécessaire à l'entrypoint, qui démarre en root, prépare le dossier
-      # de données puis bascule sur l'utilisateur postgres.
-      - CHOWN
-      - DAC_OVERRIDE
-      - FOWNER
-      - SETGID
-      - SETUID
     deploy:
       resources:
         limits:
