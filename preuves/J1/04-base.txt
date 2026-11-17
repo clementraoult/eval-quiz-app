@@ -1,0 +1,21 @@
+$ docker compose exec db psql -U <user> -d <base> -c "\dt"
+              List of tables
+ Schema |     Name     | Type  |   Owner   
+--------+--------------+-------+-----------
+ public | answers      | table | quiz_user
+ public | quiz_results | table | quiz_user
+ public | users        | table | quiz_user
+(3 rows)
+
+$ ... -c "select id, firstname, email, created_at from users"
+ id | firstname |        email        |         created_at         
+----+-----------+---------------------+----------------------------
+  1 | TestJ1    | test-j1@example.com | 2026-11-17 10:16:17.054112
+(1 row)
+
+$ ... -c "select id, user_id, score, total_questions, completed_at from quiz_results"
+ id | user_id | score | total_questions |        completed_at        
+----+---------+-------+-----------------+----------------------------
+  1 |       1 |     1 |               1 | 2026-11-17 10:16:17.091709
+(1 row)
+

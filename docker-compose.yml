@@ -1,0 +1,114 @@
+# Quiz App en local : frontend (nginx) -> backend (Node.js) -> db (PostgreSQL).
+# Les valeurs ${...} viennent du fichier .env (non versionné, voir .env.example).
+# La syntaxe ${VAR:?message} bloque le démarrage si la variable est absente ou vide.
+
+name: quiz-app
+
+services:
+  # ---------- Base de données ----------
+  db:
+    # Version épinglée par tag précis et digest
+    image: postgres:18.7-alpine3.24@sha256:b6972e1115a4ff8eba5d7f7d19184926d1e16d7d1136ae1e1a7ebf286da0f015
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER doit être défini dans .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD doit être défini dans .env}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB doit être défini dans .env}
+    volumes:
+      # Volume nommé : les données survivent à la recréation du conteneur.
+      # PostgreSQL 18 : le point de montage est /var/lib/postgresql
+      # (PGDATA=/var/lib/postgresql/18/docker), et non plus /var/lib/postgresql/data.
+      - pgdata:/var/lib/postgresql
+      # Schéma exécuté une seule fois, au premier démarrage sur un volume vide.
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    # Pas de "ports:" : la base n'est joignable que par le backend, sur le réseau du projet.
+    healthcheck:
+      # $$ : la variable est lue dans le conteneur, pas remplacée par Compose.
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      # Minimum nécessaire à l'entrypoint, qui démarre en root, prépare le dossier
+      # de données puis bascule sur l'utilisateur postgres.
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+          cpus: 1.0
+          pids: 100
+    restart: unless-stopped
+
+  # ---------- API ----------
+  backend:
+    build:
+      context: ./backend
+    image: quiz-backend:local
+    environment:
+      # "db" est le nom du service PostgreSQL, résolu par le DNS du réseau du projet.
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      # Obligatoire : sans clé, le backend plante au démarrage (Missing API key).
+      # Une valeur factice suffit si aucun accès Resend n'est fourni.
+      RESEND_API_KEY: ${RESEND_API_KEY:?RESEND_API_KEY doit être défini dans .env}
+      FROM_EMAIL: ${FROM_EMAIL:-Quiz App <noreply@example.com>}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:?ADMIN_USERNAME doit être défini dans .env}
+      # Obligatoires : le code a des valeurs par défaut publiques (admin123, change-this-secret).
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ADMIN_PASSWORD doit être défini dans .env}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET doit être défini dans .env}
+    depends_on:
+      db:
+        # Attend que la base accepte les connexions, pas seulement que le conteneur soit lancé.
+        condition: service_healthy
+    # Pas de "ports:" : le backend n'est joint que par nginx.
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+          cpus: 0.5
+          pids: 100
+    restart: unless-stopped
+
+  # ---------- Frontend ----------
+  frontend:
+    build:
+      context: .
+    image: quiz-frontend:local
+    ports:
+      # Seul port publié sur l'hôte. nginx écoute sur 8080 (utilisateur non-root).
+      - "${FRONTEND_PORT:-8087}:8080"
+    depends_on:
+      backend:
+        # nginx refuse de démarrer s'il ne peut pas résoudre "backend".
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      # nginx y écrit son PID et ses fichiers temporaires.
+      - /tmp:rw,noexec,nosuid,size=16m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+          cpus: 0.5
+          pids: 50
+    restart: unless-stopped
+
+volumes:
+  pgdata:

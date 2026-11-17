@@ -1,0 +1,15 @@
+$ docker compose ps
+SERVICE    IMAGE                                                                                              STATUS                        PORTS
+backend    quiz-backend:local                                                                                 Up About a minute (healthy)   3007/tcp
+db         postgres:18.7-alpine3.24   Up About a minute (healthy)   5432/tcp
+frontend   quiz-frontend:local                                                                                Up About a minute (healthy)   0.0.0.0:8087->8080/tcp
+
+$ docker compose exec backend sh -c "id; ps -o pid,user,args"
+uid=1000(node) gid=1000(node) groups=1000(node)
+PID   USER     COMMAND
+    1 node     /sbin/tini -- node server.js
+    7 node     {MainThread} node server.js
+   36 node     ps -o pid,user,args
+
+$ docker compose exec frontend id
+uid=101(nginx) gid=101(nginx) groups=101(nginx)
