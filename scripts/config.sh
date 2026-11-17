@@ -54,3 +54,14 @@ FRONTEND_MAX_REPLICAS="${FRONTEND_MAX_REPLICAS:-2}"
 
 # Fichier local des secrets du cloud, jamais versionné (voir .env.azure.example).
 AZURE_ENV_FILE="${AZURE_ENV_FILE:-.env.azure}"
+
+# ---------- CI/CD GitHub Actions ----------
+
+# Dépôt GitHub autorisé à déployer (fork du groupe), sous la forme propriétaire/dépôt.
+GITHUB_REPO="${GITHUB_REPO:-clementraoult/eval-quiz-app}"
+
+# Branche dont les exécutions peuvent déployer.
+GITHUB_BRANCH="${GITHUB_BRANCH:-main}"
+
+# Identité managée utilisée par le pipeline pour se connecter à Azure sans secret (OIDC).
+CI_IDENTITY="${CI_IDENTITY:-id-quiz-github}"

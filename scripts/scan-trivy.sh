@@ -8,7 +8,8 @@
 #   scripts/scan-trivy.sh final
 #   scripts/scan-trivy.sh initial quiz-backend:initial quiz-frontend:initial
 #
-# Les rapports sont écrits dans preuves/J2/scan-<étiquette>-<service>.txt.
+# Les rapports sont écrits dans preuves/J2/scan-<étiquette>-<service>.txt,
+# ou dans le dossier indiqué par la variable SCAN_OUTPUT_DIR.
 # Le script se termine en erreur si une vulnérabilité CRITICAL est trouvée.
 #
 # Trivy tourne dans un conteneur. Les images sont exportées avec "docker save" puis
@@ -28,7 +29,8 @@ if [ "$#" -eq 0 ]; then
 fi
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-OUT="$ROOT/preuves/J2"
+# Dossier des rapports : preuves/J2 par défaut, remplaçable (utilisé par la CI).
+OUT="${SCAN_OUTPUT_DIR:-$ROOT/preuves/J2}"
 CACHE="${TRIVY_CACHE_DIR:-$HOME/.cache/trivy}"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
