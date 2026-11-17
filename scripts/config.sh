@@ -65,3 +65,8 @@ GITHUB_BRANCH="${GITHUB_BRANCH:-main}"
 
 # Identité managée utilisée par le pipeline pour se connecter à Azure sans secret (OIDC).
 CI_IDENTITY="${CI_IDENTITY:-id-quiz-github}"
+
+# Sujet du jeton OIDC attendu par Azure. Laisser vide : setup-github-oidc.sh le
+# calcule à partir des identifiants numériques du dépôt. À renseigner seulement
+# si le journal de l'étape de connexion affiche un "subject claim" différent.
+GITHUB_OIDC_SUBJECT="${GITHUB_OIDC_SUBJECT:-}"

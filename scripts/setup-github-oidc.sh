@@ -46,7 +46,21 @@ PRINCIPAL_ID="$(az identity show --name "$CI_IDENTITY" --resource-group "$RESOUR
 # ---------- 2. Lien de confiance avec GitHub ----------
 # Le sujet limite la confiance aux exécutions de la branche indiquée de ce dépôt.
 # Une Pull Request, une autre branche ou un autre dépôt ne peuvent pas l'utiliser.
-SUBJECT="repo:$GITHUB_REPO:ref:refs/heads/$GITHUB_BRANCH"
+#
+# GitHub ajoute les identifiants numériques du propriétaire et du dépôt au sujet :
+#   repo:<propriétaire>@<id>/<dépôt>@<id>:ref:refs/heads/<branche>
+# Ces identifiants ne changent jamais : un dépôt recréé plus tard sous le même nom
+# n'obtiendrait pas la confiance. Azure exige une correspondance exacte du sujet
+# (sinon : AADSTS700213, No matching federated identity record found).
+if [ -z "${GITHUB_OIDC_SUBJECT:-}" ]; then
+  command -v curl >/dev/null || fail "curl est introuvable."
+  REPO_JSON="$(curl -fsS "https://api.github.com/repos/$GITHUB_REPO")" \
+    || fail "Impossible de lire le dépôt $GITHUB_REPO sur l'API GitHub."
+  REPO_ID="$(printf '%s' "$REPO_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["id"])')"
+  OWNER_ID="$(printf '%s' "$REPO_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["owner"]["id"])')"
+  GITHUB_OIDC_SUBJECT="repo:${GITHUB_REPO%%/*}@${OWNER_ID}/${GITHUB_REPO##*/}@${REPO_ID}:ref:refs/heads/$GITHUB_BRANCH"
+fi
+SUBJECT="$GITHUB_OIDC_SUBJECT"
 step "Lien de confiance : $SUBJECT"
 az identity federated-credential create \
   --name "github-$GITHUB_BRANCH" \

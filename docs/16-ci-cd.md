@@ -120,8 +120,12 @@ Mise en place : [scripts/setup-github-oidc.sh](../scripts/setup-github-oidc.sh).
 | Élément | Valeur |
 |---|---|
 | Identité | Identité managée `id-quiz-github`, dans `rg-quiz-app` |
-| Lien de confiance | Limité à `repo:clementraoult/eval-quiz-app:ref:refs/heads/main` |
+| Lien de confiance | Limité au sujet `repo:clementraoult@<id>/eval-quiz-app@<id>:ref:refs/heads/main` |
 | Conséquence | Une Pull Request, une autre branche ou un autre dépôt ne peuvent pas obtenir de jeton Azure |
+
+Le sujet doit correspondre exactement à celui du jeton présenté par GitHub.
+GitHub y ajoute les identifiants numériques du propriétaire et du dépôt, qui ne changent jamais : un dépôt recréé plus tard sous le même nom n'obtiendrait pas la confiance d'Azure.
+Le script lit ces identifiants sur l'API GitHub pour construire le sujet.
 
 ### Droits de l'identité
 
@@ -170,7 +174,18 @@ Scénario contrôlé, sans publier d'image vulnérable :
 
 L'image vulnérable n'existe que sur la machine d'exécution de la CI : la CI ne publie rien.
 
-## 7. Limites
+## 7. Difficultés rencontrées
+
+| Problème | Cause | Correction |
+|---|---|---|
+| CD en échec : `Not all values are present. Ensure 'client-id' and 'tenant-id' are supplied` | La fusion a eu lieu avant la création des variables du dépôt | Variables créées (`gh variable set`), puis relance du job |
+| CD en échec : `AADSTS700213: No matching federated identity record found` | Le lien de confiance déclarait le sujet `repo:propriétaire/dépôt:...`, alors que GitHub présente `repo:propriétaire@id/dépôt@id:...` | Sujet corrigé dans `setup-github-oidc.sh`, lu dans le journal de l'étape de connexion |
+| Version en ligne plus ancienne que `main` | La relance d'une ancienne exécution du CD redéploie **son** commit, pas le dernier. Elle a remplacé la version déployée entre-temps par une fusion plus récente | Déploiement manuel de `main` (`gh workflow run cd.yml --ref main`) |
+
+Le troisième point est une règle d'exploitation : pour redéployer, lancer le CD sur `main` plutôt que relancer une ancienne exécution.
+Les deux premiers échecs montrent aussi que, sans identité Azure valide pour la branche `main`, le pipeline ne peut rien publier ni déployer.
+
+## 8. Limites
 
 | Limite | Détail |
 |---|---|

@@ -1,0 +1,46 @@
+$ az acr repository show-tags --name clemanas --repository quiz-backend --detail
+Tag      Date
+-------  ----------------------------
+3d146de  2026-11-17T13:21:57.9850677Z
+7d2910d  2026-11-17T13:24:00.0627661Z
+ecd389a  2026-11-17T12:46:03.4489637Z
+27bad84  2026-11-17T11:37:02.5481281Z
+adbb2b2  2026-11-17T11:31:18.8044794Z
+a47334d  2026-11-17T11:20:32.3998513Z
+
+$ az acr repository show-tags --name clemanas --repository quiz-frontend --detail
+Tag      Date
+-------  ----------------------------
+3d146de  2026-11-17T13:22:06.614141Z
+7d2910d  2026-11-17T13:24:05.3588272Z
+ecd389a  2026-11-17T12:46:04.8537307Z
+27bad84  2026-11-17T11:37:03.853362Z
+adbb2b2  2026-11-17T11:31:20.4424296Z
+a47334d  2026-11-17T11:20:35.3174726Z
+
+$ az containerapp revision list --name backend --all
+Revision          Active    Image                                     Sante    Trafic    Creation
+----------------  --------  ----------------------------------------  -------  --------  -------------------------
+backend--dior8n8  False     mcr.microsoft.com/k8se/quickstart:latest  Healthy  0         2026-11-17T11:38:07+00:00
+backend--0000001  False     clemanas.azurecr.io/quiz-backend:27bad84  Healthy  0         2026-11-17T11:38:23+00:00
+backend--0000002  False     clemanas.azurecr.io/quiz-backend:ecd389a  Healthy  0         2026-11-17T12:46:33+00:00
+backend--0000003  False     clemanas.azurecr.io/quiz-backend:3d146de  Healthy  0         2026-11-17T13:22:17+00:00
+backend--0000004  True      clemanas.azurecr.io/quiz-backend:7d2910d  Healthy  0         2026-11-17T13:24:16+00:00
+backend--0000005  True      clemanas.azurecr.io/quiz-backend:3d146de  Healthy  100       2026-11-17T13:27:27+00:00
+
+$ az containerapp revision list --name frontend --all
+Revision           Active    Image                                      Sante    Trafic    Creation
+-----------------  --------  -----------------------------------------  -------  --------  -------------------------
+frontend--ehuualy  False     mcr.microsoft.com/k8se/quickstart:latest   Healthy  0         2026-11-17T11:38:42+00:00
+frontend--0000001  False     clemanas.azurecr.io/quiz-frontend:27bad84  Healthy  0         2026-11-17T11:38:56+00:00
+frontend--0000002  False     clemanas.azurecr.io/quiz-frontend:ecd389a  Healthy  0         2026-11-17T12:46:49+00:00
+frontend--0000003  False     clemanas.azurecr.io/quiz-frontend:3d146de  Healthy  0         2026-11-17T13:22:36+00:00
+frontend--0000004  True      clemanas.azurecr.io/quiz-frontend:7d2910d  Healthy  0         2026-11-17T13:24:30+00:00
+frontend--0000005  True      clemanas.azurecr.io/quiz-frontend:3d146de  Healthy  100       2026-11-17T13:27:43+00:00
+
+$ curl -i https://frontend.salmonwave-d76adf8c.francecentral.azurecontainerapps.io/health
+HTTP/2 200 
+{"status":"ok"}
+
+$ git log origin/main -1 --format=%h   # le commit en ligne est la tête de main
+3d146de
