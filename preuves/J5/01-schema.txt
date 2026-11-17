@@ -1,0 +1,29 @@
+# Première exécution de scripts/init-db.sh, le 17/11/2026 : création du schéma sur Neon.
+$ scripts/init-db.sh
+
+==> Connexion à la base
+Serveur : PostgreSQL 18.7 (a21afb5), base : neondb
+ Protocol Version     | 3.0
+ SSL Connection       | true
+ SSL Library          | OpenSSL
+ SSL Protocol         | TLSv1.3
+ SSL Key Bits         | 256
+ SSL Cipher           | TLS_AES_256_GCM_SHA384
+ SSL Compression      | false
+
+==> Schéma
+Application de database/init.sql (dans une seule transaction)
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+
+==> Tables présentes
+                List of tables
+ Schema |     Name     | Type  |    Owner     
+--------+--------------+-------+--------------
+ public | answers      | table | neondb_owner
+ public | quiz_results | table | neondb_owner
+ public | users        | table | neondb_owner
+(3 rows)

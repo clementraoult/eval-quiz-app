@@ -1,0 +1,25 @@
+# Seconde exécution de scripts/init-db.sh : les tables existent, rien n est modifié.
+$ scripts/init-db.sh
+
+==> Connexion à la base
+Serveur : PostgreSQL 18.7 (a21afb5), base : neondb
+ Protocol Version     | 3.0
+ SSL Connection       | true
+ SSL Library          | OpenSSL
+ SSL Protocol         | TLSv1.3
+ SSL Key Bits         | 256
+ SSL Cipher           | TLS_AES_256_GCM_SHA384
+ SSL Compression      | false
+
+==> Schéma
+Les tables existent déjà : schéma non modifié.
+
+==> Tables présentes
+                List of tables
+ Schema |     Name     | Type  |    Owner     
+--------+--------------+-------+--------------
+ public | answers      | table | neondb_owner
+ public | quiz_results | table | neondb_owner
+ public | users        | table | neondb_owner
+(3 rows)
+
