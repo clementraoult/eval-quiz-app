@@ -1,0 +1,3 @@
+# Seul init.sql est nécessaire au build
+*
+!init.sql

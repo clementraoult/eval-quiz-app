@@ -22,10 +22,20 @@ ENV NODE_ENV=production
 
 WORKDIR /app
 
-# tini : mini processus d'init qui sera le processus n°1 du conteneur.
-# Sous Linux, le PID 1 ignore SIGTERM s'il n'a pas prévu de le traiter, et server.js
-# ne le traite pas : sans tini, docker stop attend 10 s puis force l'arrêt.
-RUN apk add --no-cache tini
+# Durcissement de l'image (une seule couche) :
+# - apk upgrade : correctifs de sécurité Alpine publiés depuis l'image de base ;
+# - tini : mini processus d'init qui sera le processus n°1 du conteneur. Sous Linux,
+#   le PID 1 ignore SIGTERM s'il n'a pas prévu de le traiter, et server.js ne le
+#   traite pas : sans tini, docker stop attend 10 s puis force l'arrêt ;
+# - suppression de npm, npx, corepack et yarn : inutiles pour exécuter server.js,
+#   ils portaient la majorité des vulnérabilités relevées par Trivy ;
+# - suppression du gestionnaire de paquets apk : rien ne doit être installé à l'exécution.
+RUN apk upgrade --no-cache \
+  && apk add --no-cache tini \
+  && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack \
+            /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack \
+            /usr/local/bin/yarn /usr/local/bin/yarnpkg /opt/yarn-* \
+  && apk --purge del apk-tools
 
 # Les fichiers appartiennent à root : l'utilisateur node peut les lire, pas les modifier.
 COPY --from=deps /app/node_modules ./node_modules

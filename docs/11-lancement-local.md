@@ -20,6 +20,7 @@ Node.js et PostgreSQL ne sont pas nécessaires sur le poste : tout tourne dans l
 | `backend/.dockerignore` | Contexte de build du backend |
 | `backend/package-lock.json` | Versions exactes des dépendances, exigé par `npm ci` |
 | `nginx/nginx.conf` | Configuration nginx, port d'écoute passé de 80 à 8080 |
+| `database/Dockerfile` | Image PostgreSQL durcie, avec le schéma `init.sql` intégré |
 | `docker-compose.yml` | Les trois services, le réseau, le volume et les restrictions de sécurité |
 | `.env.example` | Modèle de configuration, sans valeur réelle |
 
@@ -52,7 +53,7 @@ Le fichier `.env` est exclu de Git par `.gitignore`.
 
 ```bash
 docker compose config -q        # valide le fichier (n'affiche rien si tout est correct)
-docker compose up -d --build    # construit les deux images puis démarre les trois services
+docker compose up -d --build    # construit les trois images puis démarre les trois services
 docker compose ps               # les trois services doivent être "healthy"
 ```
 
@@ -118,15 +119,16 @@ Après une modification de `database/init.sql`, le nouveau schéma n'est appliqu
 | Mesure | frontend | backend | db |
 |---|---|---|---|
 | Image de base épinglée (tag précis et digest) | Oui | Oui | Oui |
-| Utilisateur non-root | UID 101 | `node` (UID 1000) | `postgres` après initialisation |
+| Utilisateur non-root | UID 101 | `node` (UID 1000) | `postgres` (UID 70) |
 | Port publié sur le poste | 8087 | Aucun | Aucun |
 | Système de fichiers en lecture seule | Oui, `/tmp` en mémoire | Oui | Non, la base écrit sur disque |
 | `no-new-privileges` | Oui | Oui | Oui |
-| Capacités Linux | Toutes retirées | Toutes retirées | 5 conservées pour l'initialisation |
+| Capacités Linux | Toutes retirées | Toutes retirées | Toutes retirées |
+| Outils retirés de l'image | `curl`, `apk` | npm, yarn, `apk` | `gosu`, `apk` |
 | Limites mémoire, CPU, processus | Oui | Oui | Oui |
 | Vérification de santé | Page d'accueil | `/health` | `pg_isready` |
 
-L'analyse des vulnérabilités des images (Trivy) fait l'objet du jalon 2.
+L'analyse des vulnérabilités des images avec Trivy est décrite dans [12 - Sécurité des images](12-securite-images.md).
 
 ## 8. Dépannage
 
