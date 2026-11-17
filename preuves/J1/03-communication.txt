@@ -1,0 +1,19 @@
+$ curl -i http://localhost:8087/health   # navigateur -> nginx -> backend
+HTTP/1.1 200 OK
+Server: nginx/1.31.7
+Content-Type: application/json; charset=utf-8
+{"status":"ok"}
+
+$ curl -I http://localhost:8087/
+HTTP/1.1 200 OK
+Content-Type: text/html
+
+$ curl -I http://localhost:8087/gestion-quiz
+HTTP/1.1 200 OK
+Content-Type: text/html
+
+$ curl http://localhost:3007/health   # backend non publié sur le poste
+connexion refusée (code 7)
+
+$ ss -ltn | grep -E ":(3007|5432|8087) "   # seul 8087 écoute sur le poste
+LISTEN 0.0.0.0:8087

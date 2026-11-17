@@ -36,8 +36,12 @@ L'image finale ne contient ni Node.js, ni `node_modules`, ni le code source.
 
 `--watch` est inutile dans une image, dont les fichiers ne changent pas.
 Le conteneur lancera directement `node server.js` (forme exec, sans passer par npm).
-Ainsi `node` est le processus n°1 du conteneur et reçoit le signal `SIGTERM` de `docker stop` : l'arrêt est immédiat et propre.
-Avec `npm start`, c'est npm qui reçoit le signal et il ne le transmet pas toujours à node : Docker attend alors 10 secondes avant de forcer l'arrêt.
+Avec `npm start`, c'est npm qui reçoit le signal `SIGTERM` de `docker stop` et il ne le transmet pas toujours à node.
+
+Lancer `node` directement ne suffit pas pour autant. Test réalisé : avec `node server.js` comme processus n°1, `docker stop` met 10 secondes.
+Sous Linux, le processus n°1 ignore `SIGTERM` s'il n'a pas prévu de le traiter, et `server.js` ne le traite pas : Docker attend le délai de 10 secondes puis force l'arrêt.
+Le code ne devant pas être modifié, l'image utilise `tini`, un mini processus d'init qui occupe le PID 1 et transmet les signaux à node.
+Résultat mesuré : `docker stop` en 0,2 seconde.
 
 ## 2. Ports
 
@@ -262,7 +266,7 @@ Seul le frontend publie un port sur l'hôte. Le backend et la base ne sont joign
 | Choix | Justification |
 |---|---|
 | Frontend en multi-stage (Node puis nginx) | Image finale minimale, sans outils de build |
-| Backend lancé par `node server.js` | Arrêt propre, npm inutile à l'exécution |
+| Backend lancé par `tini` puis `node server.js` | Arrêt propre en 0,2 s au lieu de 10 s, npm inutile à l'exécution |
 | Services nommés `backend` et `db` | Noms attendus par `nginx.conf` et `DATABASE_URL` |
 | Un seul port publié (frontend) | Surface d'attaque réduite |
 | Volume nommé pour PostgreSQL | Données conservées après recréation des conteneurs |

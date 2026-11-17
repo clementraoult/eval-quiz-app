@@ -1,0 +1,60 @@
+# Test de persistance, 17/11/2026 11:25
+
+$ docker volume ls | grep quiz-app
+DRIVER    VOLUME NAME
+local     quiz-app_pgdata
+
+$ docker compose exec db sh -c "echo \$PGDATA"
+/var/lib/postgresql/18/docker
+
+$ docker inspect quiz-app-db-1 (montages)
+volume  quiz-app_pgdata  ->  /var/lib/postgresql
+bind  ./database/init.sql  ->  /docker-entrypoint-initdb.d/init.sql
+
+--- AVANT : contenu de la base
+ users | quiz_results | answers 
+-------+--------------+---------
+     1 |            1 |       1
+(1 row)
+
+$ docker compose down        # sans -v : le volume est conservé
+ Container quiz-app-frontend-1  Stopping
+ Container quiz-app-frontend-1  Stopped
+ Container quiz-app-frontend-1  Removing
+ Container quiz-app-frontend-1  Removed
+ Container quiz-app-backend-1  Stopping
+ Container quiz-app-backend-1  Stopped
+ Container quiz-app-backend-1  Removing
+ Container quiz-app-backend-1  Removed
+ Container quiz-app-db-1  Stopping
+ Container quiz-app-db-1  Stopped
+ Container quiz-app-db-1  Removing
+ Container quiz-app-db-1  Removed
+ Network quiz-app_default  Removing
+ Network quiz-app_default  Removed
+
+$ docker ps -a | grep quiz-app   # plus aucun conteneur
+(aucun)
+
+$ docker volume ls | grep quiz-app   # le volume existe toujours
+local     quiz-app_pgdata
+
+$ docker compose up -d
+ Network quiz-app_default  Created
+ Container quiz-app-db-1  Created
+ Container quiz-app-backend-1  Created
+ Container quiz-app-frontend-1  Created
+ Container quiz-app-db-1  Started
+ Container quiz-app-db-1  Healthy
+ Container quiz-app-backend-1  Started
+ Container quiz-app-backend-1  Healthy
+ Container quiz-app-frontend-1  Started
+
+--- APRÈS : contenu de la base, conteneurs recréés
+ users | quiz_results | answers 
+-------+--------------+---------
+     1 |            1 |       1
+(1 row)
+
+$ docker compose logs db | grep -i init   # le script init.sql n est pas rejoué
+PostgreSQL Database directory appears to contain a database; Skipping initialization

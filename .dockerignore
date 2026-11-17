@@ -1,0 +1,36 @@
+# Contexte de build du frontend (Dockerfile à la racine).
+
+# Historique Git : inutile dans l'image, peut contenir des secrets supprimés depuis
+.git
+.gitignore
+.github
+
+# Dépendances et build locaux : refaits proprement dans l'image
+node_modules
+dist
+
+# Autres composants : ils ont leur propre image ou ne sont pas du code frontend
+backend
+database
+scripts
+preuves
+docs
+
+# Fichiers Docker et documentation : inutiles pour construire le site
+Dockerfile*
+.dockerignore
+docker-compose*.yml
+compose*.yaml
+*.md
+
+# Secrets et configuration locale : ne doivent jamais entrer dans une image
+.env
+.env.*
+*.pem
+*.key
+
+# Fichiers de sauvegarde : Vite copie public/ tel quel dans dist/, ils seraient servis en ligne
+**/*.old
+**/*.bak
+**/*~
+*.log

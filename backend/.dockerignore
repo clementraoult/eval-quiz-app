@@ -1,0 +1,16 @@
+# Dépendances locales : réinstallées proprement dans l'image par npm ci
+node_modules
+
+# Fichiers Docker et documentation : inutiles pour exécuter l'API
+Dockerfile*
+.dockerignore
+*.md
+
+# Secrets et configuration locale : ne doivent jamais entrer dans une image
+.env
+.env.*
+*.pem
+*.key
+
+# Journaux
+*.log
