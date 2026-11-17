@@ -162,3 +162,5 @@ vite.config.ts.timestamp-*
 node_modules/
 dist/
 *.log
+# Modèle des secrets Azure : versionné, sans valeur réelle
+!.env.azure.example

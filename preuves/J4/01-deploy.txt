@@ -1,0 +1,43 @@
+==> Vérifications
+Abonnement           : Azure for Students
+Groupe de ressources : rg-quiz-app
+Région               : francecentral
+Registre             : clemanas
+Environnement        : env-quiz-app
+Base de données      : aucune (DATABASE_URL vide, voir jalon 5)
+Tag des images       : 27bad84
+==> Groupe de ressources rg-quiz-app
+Nom          Region         Etat
+-----------  -------------  ---------
+rg-quiz-app  francecentral  Succeeded
+==> Registre clemanas
+Le registre existe déjà.
+Serveur : clemanas.azurecr.io
+==> Construction de clemanas.azurecr.io/quiz-backend:27bad84
+==> Construction de clemanas.azurecr.io/quiz-frontend:27bad84
+==> Connexion de Docker au registre
+Login Succeeded
+==> Publication des images
+The push refers to repository [clemanas.azurecr.io/quiz-backend]
+27bad84: digest: sha256:27350555256a7e21c6c2135137efd2da139cc8f5386a24667bc61bb0b5bfd892 size: 856
+The push refers to repository [clemanas.azurecr.io/quiz-frontend]
+27bad84: digest: sha256:c22920552008af689667d76edda6472b1e8aff90dd4042801846cb042b11d633 size: 856
+==> Environnement Container Apps env-quiz-app
+L'environnement existe déjà.
+==> Application backend
+WARNING: 
+Container app created. Access your app at https://backend.internal.salmonwave-d76adf8c.francecentral.azurecontainerapps.io/
+Nom      Revision          Etat
+-------  ----------------  ---------
+backend  backend--0000001  Succeeded
+==> Application frontend
+WARNING: 
+Container app created. Access your app at https://frontend.salmonwave-d76adf8c.francecentral.azurecontainerapps.io/
+Nom       Revision           Etat
+--------  -----------------  ---------
+frontend  frontend--0000001  Succeeded
+==> Test de https://frontend.salmonwave-d76adf8c.francecentral.azurecontainerapps.io/health (navigateur -> frontend -> backend)
+Tentative 1 : HTTP 000, nouvelle tentative dans 10 s
+Images déployées : tag 27bad84
+Application      : https://frontend.salmonwave-d76adf8c.francecentral.azurecontainerapps.io
+Santé du backend : HTTP 200 {"status":"ok"}

@@ -1,0 +1,18 @@
+$ az resource list --resource-group rg-quiz-app
+Nom           Ressource                               Region
+------------  --------------------------------------  -------------
+clemanas      Microsoft.ContainerRegistry/registries  francecentral
+env-quiz-app  Microsoft.App/managedEnvironments       francecentral
+backend       Microsoft.App/containerApps             francecentral
+frontend      Microsoft.App/containerApps             francecentral
+
+$ az containerapp env show --name env-quiz-app
+Nom           Mode              Etat       Domaine
+------------  ----------------  ---------  -------------------------------------------------------
+env-quiz-app  WorkloadProfiles  Succeeded  salmonwave-d76adf8c.francecentral.azurecontainerapps.io
+
+$ az containerapp list --resource-group rg-quiz-app
+Nom       Etat     Acces    Transport    PortCible    PortExpose    Revision
+--------  -------  -------  -----------  -----------  ------------  -----------------
+backend   Running  False    Tcp          3007         3007          backend--0000001
+frontend  Running  True     Auto         8080         0             frontend--0000001
