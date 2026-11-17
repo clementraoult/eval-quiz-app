@@ -26,6 +26,11 @@ FRONTEND_REPO="${FRONTEND_REPO:-quiz-frontend}"
 # Environnement : réseau et frontière communs aux applications.
 ACA_ENV="${ACA_ENV:-env-quiz-app}"
 
+# Mode de l'environnement. Sans cette option, Azure CLI crée un environnement
+# "Express", qui refuse l'accès TCP interne dont le backend a besoin
+# (erreur ExpressTcpIngressNotSupported).
+ACA_ENV_MODE="${ACA_ENV_MODE:-WorkloadProfiles}"
+
 # Nom des applications. Le backend DOIT s'appeler "backend" : nginx le joint
 # par ce nom (server backend:3007 dans nginx/nginx.conf), comme en local.
 BACKEND_APP="${BACKEND_APP:-backend}"

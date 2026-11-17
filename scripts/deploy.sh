@@ -154,9 +154,12 @@ if az containerapp env show --name "$ACA_ENV" --resource-group "$RESOURCE_GROUP"
 else
   # --logs-destination none : pas d'espace Log Analytics (payant). Les journaux
   # restent consultables en direct avec "az containerapp logs show".
+  # --environment-mode : option de l'extension "containerapp" d'Azure CLI
+  # (az extension add --name containerapp). Voir ACA_ENV_MODE dans config.sh.
   az containerapp env create --name "$ACA_ENV" --resource-group "$RESOURCE_GROUP" \
     --location "$LOCATION" --logs-destination none \
-    --query "{nom:name, region:location, etat:properties.provisioningState}" -o table
+    --environment-mode "$ACA_ENV_MODE" \
+    --query "{nom:name, region:location, mode:properties.environmentMode, etat:properties.provisioningState}" -o table
 fi
 
 # ---------- 7. Backend ----------
