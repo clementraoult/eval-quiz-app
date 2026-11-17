@@ -1,0 +1,44 @@
+# CD après fusion de la PR n°8 dans main (commit 7d2910d)
+Unknown JSON field: "attempt"
+Available fields:
+  conclusion
+  createdAt
+  databaseId
+  displayTitle
+  event
+  headBranch
+  headSha
+  jobs
+  name
+  number
+  startedAt
+  status
+  updatedAt
+  url
+  workflowDatabaseId
+  workflowName
+
+Publication ACR et déploiement Container Apps : success
+    Set up job | success
+    Récupération du code | success
+    Paramètres | success
+    Construction des images | success
+    Scan Trivy (bloquant sur CRITICAL) | success
+    Rapports Trivy | success
+    Connexion à Azure (OIDC, sans secret) | success
+    Publication dans ACR | success
+    Mise à jour du backend | success
+    Mise à jour du frontend | success
+    Vérification de la nouvelle version | success
+    Résumé du déploiement | success
+
+# Extraits du journal de la tentative réussie
+ subject claim - repo:clementraoult@253042268/eval-quiz-app@1461163504:ref:refs/heads/main
+7d2910d: digest: sha256:a0bdcf4353a624a8db0aecd98b3fb7d5f0fcfbec2bea39fa8e71536c7842eaa5 size: 1992
+7d2910d: digest: sha256:4f51e164f593d7c6c98458174f191834225dfb314f430907437140ac2b9442c7 size: 2824
+backend        backend--0000004  Succeeded
+frontend       frontend--0000004  Succeeded
+backend--0000003  clemanas.azurecr.io/quiz-backend:3d146de  Healthy  0
+backend--0000004  clemanas.azurecr.io/quiz-backend:7d2910d  Healthy  100
+frontend--0000003  clemanas.azurecr.io/quiz-frontend:3d146de  Healthy  0
+frontend--0000004  clemanas.azurecr.io/quiz-frontend:7d2910d  None     100

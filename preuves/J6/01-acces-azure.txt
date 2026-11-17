@@ -1,17 +1,25 @@
-$ scripts/setup-github-oidc.sh
+$ scripts/setup-github-oidc.sh   (extraits)
 
 $ az identity show --name id-quiz-github
-Nom             Region
---------------  -------------
-id-quiz-github  francecentral
+Nom             Ressource                                         Region
+--------------  ------------------------------------------------  -------------
+id-quiz-github  Microsoft.ManagedIdentity/userAssignedIdentities  francecentral
 
 $ az identity federated-credential list --identity-name id-quiz-github
 Nom          Emetteur                                     Sujet
------------  -------------------------------------------  ----------------------------------------------------
-github-main  https://token.actions.githubusercontent.com  repo:clementraoult/eval-quiz-app:ref:refs/heads/main
+-----------  -------------------------------------------  -------------------------------------------------------------------------
+github-main  https://token.actions.githubusercontent.com  repo:clementraoult@253042268/eval-quiz-app@1461163504:ref:refs/heads/main
 
 $ az role assignment list --assignee <identité> --all   # droits du pipeline
-Reader     <abonnement>/resourceGroups/rg-quiz-app                                                                         
-AcrPush    <abonnement>/resourceGroups/rg-quiz-app/providers/Microsoft.ContainerRegistry/registries/clemanas               
-Container  Apps                                                                                               Contributor  <abonnement>/resourceGroups/rg-quiz-app/providers/Microsoft.App/containerapps/backend
-Container  Apps                                                                                               Contributor  <abonnement>/resourceGroups/rg-quiz-app/providers/Microsoft.App/containerapps/frontend
+Reader                       <abonnement>/resourceGroups/rg-quiz-app
+AcrPush                      <abonnement>/resourceGroups/rg-quiz-app/providers/Microsoft.ContainerRegistry/registries/clemanas
+Container Apps Contributor   <abonnement>/resourceGroups/rg-quiz-app/providers/Microsoft.App/containerapps/backend
+Container Apps Contributor   <abonnement>/resourceGroups/rg-quiz-app/providers/Microsoft.App/containerapps/frontend
+
+$ gh variable list   # variables du dépôt (identifiants, pas des secrets)
+AZURE_CLIENT_ID   (définie le 2026-11-17T13:19:23Z)
+AZURE_SUBSCRIPTION_ID   (définie le 2026-11-17T13:19:25Z)
+AZURE_TENANT_ID   (définie le 2026-11-17T13:19:24Z)
+
+$ gh secret list   # aucun secret GitHub nécessaire
+(fin de liste)

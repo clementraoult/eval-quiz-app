@@ -1,0 +1,45 @@
+# CI sur la Pull Request n°8 (feature/j6-ci-cd)
+# https://github.com/clementraoult/eval-quiz-app/pull/8
+
+$ gh pr checks 8
+Build et scan Trivy (backend)            pass     https://github.com/clementraoult/eval-quiz-app/actions/runs/44089128188/job/134059343280
+Build et scan Trivy (frontend)           pass     https://github.com/clementraoult/eval-quiz-app/actions/runs/44089128188/job/134059343506
+Test de la stack Docker Compose          pass     https://github.com/clementraoult/eval-quiz-app/actions/runs/44089128188/job/134059343260
+
+$ gh run view 44089128188
+workflow: CI
+événement: pull_request
+branche: feature/j6-ci-cd
+commit: 68370c9
+résultat: success
+date: 2026-11-17T13:04:37Z
+url: https://github.com/clementraoult/eval-quiz-app/actions/runs/44089128188
+
+Test de la stack Docker Compose : success
+    Set up job | success
+    Récupération du code | success
+    Configuration de test | success
+    Démarrage de la stack | success
+    Test du parcours principal | success
+    Journaux en cas d'échec | skipped
+    Arrêt de la stack | success
+    Post Récupération du code | success
+    Complete job | success
+Build et scan Trivy (backend) : success
+    Set up job | success
+    Récupération du code | success
+    Construction de l'image | success
+    Scan Trivy (bloquant sur CRITICAL) | success
+    Résumé du scan | success
+    Rapport Trivy complet | success
+    Post Récupération du code | success
+    Complete job | success
+Build et scan Trivy (frontend) : success
+    Set up job | success
+    Récupération du code | success
+    Construction de l'image | success
+    Scan Trivy (bloquant sur CRITICAL) | success
+    Résumé du scan | success
+    Rapport Trivy complet | success
+    Post Récupération du code | success
+    Complete job | success

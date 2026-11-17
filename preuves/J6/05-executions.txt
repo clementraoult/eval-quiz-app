@@ -1,0 +1,7 @@
+# Exécutions GitHub Actions du dépôt clementraoult/eval-quiz-app
+$ gh run list
+2026-11-17T13:25:58Z  CD  workflow_dispatch  main               3d146de  success  https://github.com/clementraoult/eval-quiz-app/actions/runs/44092662687
+2026-11-17T13:20:49Z  CD  push               main               3d146de  success  https://github.com/clementraoult/eval-quiz-app/actions/runs/44091809003
+2026-11-17T13:18:45Z  CI  pull_request       feature/j2-resend  b7dce96  success  https://github.com/clementraoult/eval-quiz-app/actions/runs/44091462736
+2026-11-17T13:05:49Z  CD  push               main               7d2910d  success  https://github.com/clementraoult/eval-quiz-app/actions/runs/44089326525
+2026-11-17T13:04:37Z  CI  pull_request       feature/j6-ci-cd   68370c9  success  https://github.com/clementraoult/eval-quiz-app/actions/runs/44089128188
