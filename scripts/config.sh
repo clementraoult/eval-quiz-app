@@ -52,6 +52,10 @@ BACKEND_MAX_REPLICAS="${BACKEND_MAX_REPLICAS:-1}"
 FRONTEND_MIN_REPLICAS="${FRONTEND_MIN_REPLICAS:-0}"
 FRONTEND_MAX_REPLICAS="${FRONTEND_MAX_REPLICAS:-2}"
 
+# Nom de domaine personnalisé du frontend (facultatif). Laisser vide pour ne pas en utiliser.
+# Les enregistrements DNS doivent exister avant le déploiement : voir docs/18-nom-de-domaine.md.
+CUSTOM_DOMAIN="${CUSTOM_DOMAIN:-g09.labformation.fr}"
+
 # Fichier local des secrets du cloud, jamais versionné (voir .env.azure.example).
 AZURE_ENV_FILE="${AZURE_ENV_FILE:-.env.azure}"
 

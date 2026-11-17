@@ -1,0 +1,24 @@
+$ curl -i https://g09.labformation.fr/health
+HTTP/2 200 
+content-type: application/json; charset=utf-8
+{"status":"ok"}
+
+
+$ curl -I https://g09.labformation.fr/
+HTTP/2 200 
+content-type: text/html
+
+$ curl -I http://g09.labformation.fr/   # HTTP redirigé vers HTTPS
+HTTP/1.1 301 Moved Permanently
+location: https://g09.labformation.fr/
+
+$ openssl s_client -connect g09.labformation.fr:443 -servername g09.labformation.fr | openssl x509 -noout -subject -issuer -dates
+subject=CN=g09.labformation.fr
+issuer=C=US, O=DigiCert Inc, OU=www.digicert.com, CN=GeoTrust TLS RSA CA G1
+notBefore=Nov 17 00:00:00 2026 GMT
+notAfter=May 17 23:59:59 2027 GMT
+X509v3 Subject Alternative Name: 
+    DNS:g09.labformation.fr
+
+$ curl : vérification du certificat
+ssl_verify_result=0 (0 = certificat valide)

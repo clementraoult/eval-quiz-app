@@ -10,7 +10,7 @@
 #   5. publication dans ACR avec un tag traçable (commit Git) ;
 #   6. environnement Azure Container Apps ;
 #   7. application backend (accès interne uniquement) ;
-#   8. application frontend (accès public en HTTPS) ;
+#   8. application frontend (accès public en HTTPS), et son nom de domaine ;
 #   9. test de /health à travers le frontend.
 #
 # Usage :
@@ -233,6 +233,26 @@ else
     --query "{nom:name, revision:properties.latestRevisionName, etat:properties.provisioningState}" -o table
 fi
 
+# ---------- 8 bis. Nom de domaine personnalisé (facultatif) ----------
+if [ -n "$CUSTOM_DOMAIN" ]; then
+  step "Nom de domaine $CUSTOM_DOMAIN"
+  BINDING="$(az containerapp hostname list --name "$FRONTEND_APP" --resource-group "$RESOURCE_GROUP" \
+    --query "[?name=='$CUSTOM_DOMAIN'].bindingType | [0]" -o tsv 2>/dev/null || true)"
+  if [ "$BINDING" = "SniEnabled" ]; then
+    echo "Le domaine est déjà rattaché, avec son certificat."
+  else
+    # Prérequis côté DNS : un CNAME vers le nom du frontend et un TXT asuid.<domaine>
+    # contenant l'identifiant de vérification de l'application.
+    # "bind" ajoute le domaine, fait émettre un certificat managé gratuit (validation
+    # par le CNAME) et l'associe au domaine. L'émission prend quelques minutes.
+    az containerapp hostname add --name "$FRONTEND_APP" --resource-group "$RESOURCE_GROUP" \
+      --hostname "$CUSTOM_DOMAIN" -o none 2>/dev/null || true
+    az containerapp hostname bind --name "$FRONTEND_APP" --resource-group "$RESOURCE_GROUP" \
+      --hostname "$CUSTOM_DOMAIN" --environment "$ACA_ENV" --validation-method CNAME -o none
+    echo "Domaine rattaché."
+  fi
+fi
+
 # ---------- 9. Vérification ----------
 FRONTEND_FQDN="$(az containerapp show --name "$FRONTEND_APP" --resource-group "$RESOURCE_GROUP" \
   --query properties.configuration.ingress.fqdn -o tsv)"
@@ -250,6 +270,7 @@ done
 echo
 echo "Images déployées : tag $IMAGE_TAG"
 echo "Application      : $FRONTEND_URL"
+[ -n "$CUSTOM_DOMAIN" ] && echo "Nom de domaine   : https://$CUSTOM_DOMAIN"
 if [ "$STATUS" = "200" ]; then
   echo "Santé du backend : HTTP 200 $(curl -s --max-time 20 "$FRONTEND_URL/health")"
 else
