@@ -1,0 +1,20 @@
+# Nom de domaine personnalisé, le 17/11/2026 à 16:33
+
+$ dig +short @1.1.1.1 g09.labformation.fr CNAME
+frontend.salmonwave-d76adf8c.francecentral.azurecontainerapps.io.
+
+$ dig +short @1.1.1.1 asuid.g09.labformation.fr TXT   # preuve de propriété demandée par Azure
+"5B4075A2B67766582D8A8CEC789C275DEC4C2B7B7914F45F35728AE0F643D2E2"
+
+$ az containerapp show --name frontend   # identifiant de vérification attendu
+5B4075A2B67766582D8A8CEC789C275DEC4C2B7B7914F45F35728AE0F643D2E2
+
+$ az containerapp hostname list --name frontend
+Domaine              Liaison
+-------------------  ----------
+g09.labformation.fr  SniEnabled
+
+$ az containerapp env certificate list --name env-quiz-app --managed-certificates-only
+Domaine              Etat       Validation
+-------------------  ---------  ------------
+g09.labformation.fr  Succeeded  CNAME

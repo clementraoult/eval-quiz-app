@@ -24,7 +24,8 @@ Toutes les commandes se lancent depuis la racine du dépôt.
 | Valeur utile | |
 |---|---|
 | Application locale | http://localhost:8087 |
-| Application en ligne | https://frontend.salmonwave-d76adf8c.francecentral.azurecontainerapps.io |
+| Application en ligne | https://g09.labformation.fr |
+| Adresse Azure d'origine | https://frontend.salmonwave-d76adf8c.francecentral.azurecontainerapps.io |
 | Groupe de ressources | `rg-quiz-app` |
 | Registre | `clemanas.azurecr.io` |
 | Environnement Container Apps | `env-quiz-app` |
@@ -110,7 +111,7 @@ curl -i http://localhost:8087/health
 curl -I http://localhost:8087/
 
 # En ligne
-curl -i https://frontend.salmonwave-d76adf8c.francecentral.azurecontainerapps.io/health
+curl -i https://g09.labformation.fr/health
 
 # Inscription (écrit en base)
 curl -X POST http://localhost:8087/api/users \
@@ -149,6 +150,14 @@ az containerapp revision restart -n backend -g rg-quiz-app --revision <nom-de-la
 # Variables et secrets du backend (noms seulement)
 az containerapp show -n backend -g rg-quiz-app --query "properties.template.containers[0].env" -o table
 az containerapp secret list -n backend -g rg-quiz-app -o table
+```
+
+### Nom de domaine et certificat
+
+```bash
+az containerapp hostname list -n frontend -g rg-quiz-app -o table
+az containerapp env certificate list -n env-quiz-app -g rg-quiz-app --managed-certificates-only -o table
+dig +short g09.labformation.fr CNAME
 ```
 
 ### Registre
