@@ -3,17 +3,19 @@
 Abonnement         : Azure for Students
 Groupe de ressources : rg-quiz-app
 Région             : francecentral
-Registre           : quizappclem
-Tag des images     : 6820d93
+Registre           : clemanas
+Tag des images     : a47334d
 ==> Groupe de ressources rg-quiz-app
 Nom          Region         Etat
 -----------  -------------  ---------
 rg-quiz-app  francecentral  Succeeded
-==> Registre quizappclem
-Le registre existe déjà.
-Serveur : quizappclem.azurecr.io
+==> Registre clemanas
+Nom       Serveur              Sku    Admin
+--------  -------------------  -----  -------
+clemanas  clemanas.azurecr.io  Basic  False
+Serveur : clemanas.azurecr.io
 
-==> Construction de quizappclem.azurecr.io/quiz-backend:6820d93
+==> Construction de clemanas.azurecr.io/quiz-backend:a47334d
 #0 building with "default" instance using docker driver
 
 #1 [internal] load build definition from Dockerfile
@@ -21,7 +23,7 @@ Serveur : quizappclem.azurecr.io
 #1 DONE 0.0s
 
 #2 [internal] load metadata for docker.io/library/node:24.22.3-alpine3.24@sha256:116b800c3754…
-#2 DONE 0.0s
+#2 DONE 0.1s
 
 #3 [internal] load .dockerignore
 #3 transferring context: 348B done
@@ -34,19 +36,19 @@ Serveur : quizappclem.azurecr.io
 #5 [deps 1/4] FROM docker.io/library/node:24.22.3-alpine3.24@sha256:116b800c3754…
 #5 DONE 0.0s
 
-#6 [deps 3/4] COPY package.json package-lock.json ./
+#6 [stage-1 4/5] COPY --from=deps /app/node_modules ./node_modules
 #6 CACHED
 
-#7 [deps 4/4] RUN npm ci --omit=dev
+#7 [deps 2/4] WORKDIR /app
 #7 CACHED
 
-#8 [stage-1 4/5] COPY --from=deps /app/node_modules ./node_modules
+#8 [deps 4/4] RUN npm ci --omit=dev
 #8 CACHED
 
-#9 [deps 2/4] WORKDIR /app
+#9 [stage-1 3/5] RUN apk upgrade --no-cache   && apk add --no-cache tini   && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack             /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack             /usr/local/bin/yarn /usr/local/bin/yarnpkg /opt/yarn-*   && apk --purge del apk-tools
 #9 CACHED
 
-#10 [stage-1 3/5] RUN apk upgrade --no-cache   && apk add --no-cache tini   && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack             /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack             /usr/local/bin/yarn /usr/local/bin/yarnpkg /opt/yarn-*   && apk --purge del apk-tools
+#10 [deps 3/4] COPY package.json package-lock.json ./
 #10 CACHED
 
 #11 [stage-1 5/5] COPY package.json server.js ./
@@ -54,93 +56,90 @@ Serveur : quizappclem.azurecr.io
 
 #12 exporting to image
 #12 exporting layers done
-#12 exporting manifest sha256:992f49995172… done
-#12 exporting config sha256:9676436695f9… done
-#12 exporting attestation manifest sha256:ac34cb91147e… 0.0s done
-#12 exporting manifest list sha256:62baba2aa2d6… 0.0s done
-#12 naming to quizappclem.azurecr.io/quiz-backend:6820d93 done
-#12 unpacking to quizappclem.azurecr.io/quiz-backend:6820d93 0.0s done
+#12 exporting manifest sha256:1265a53e8c21… done
+#12 exporting config sha256:c0d0f0ca3af2… 0.0s done
+#12 exporting attestation manifest sha256:cfdfc3e7cb99… 0.0s done
+#12 exporting manifest list sha256:3f542326e2c8…
+#12 exporting manifest list sha256:3f542326e2c8… done
+#12 naming to clemanas.azurecr.io/quiz-backend:a47334d done
+#12 unpacking to clemanas.azurecr.io/quiz-backend:a47334d 0.0s done
 #12 DONE 0.1s
 
-==> Construction de quizappclem.azurecr.io/quiz-frontend:6820d93
+==> Construction de clemanas.azurecr.io/quiz-frontend:a47334d
 #0 building with "default" instance using docker driver
 
 #1 [internal] load build definition from Dockerfile
 #1 transferring dockerfile: 2.07kB done
 #1 DONE 0.0s
 
-#2 [internal] load metadata for docker.io/nginxinc/nginx-unprivileged:1.31-alpine3.24@sha256:b5047b9b7684…
+#2 [internal] load metadata for docker.io/library/node:24.22.3-alpine3.24@sha256:116b800c3754…
 #2 DONE 0.0s
 
-#3 [internal] load metadata for docker.io/library/node:24.22.3-alpine3.24@sha256:116b800c3754…
-#3 DONE 0.0s
+#3 [internal] load metadata for docker.io/nginxinc/nginx-unprivileged:1.31-alpine3.24@sha256:b5047b9b7684…
+#3 DONE 0.1s
 
 #4 [internal] load .dockerignore
+#4 transferring context:
 #4 transferring context: 778B done
 #4 DONE 0.0s
 
-#5 [internal] load build context
+#5 [build 1/6] FROM docker.io/library/node:24.22.3-alpine3.24@sha256:116b800c3754…
 #5 DONE 0.0s
 
-#6 [build 1/6] FROM docker.io/library/node:24.22.3-alpine3.24@sha256:116b800c3754…
+#6 [stage-1 1/4] FROM docker.io/nginxinc/nginx-unprivileged:1.31-alpine3.24@sha256:b5047b9b7684…
 #6 DONE 0.0s
 
-#7 [stage-1 1/4] FROM docker.io/nginxinc/nginx-unprivileged:1.31-alpine3.24@sha256:b5047b9b7684…
+#7 [internal] load build context
+#7 transferring context: 964B done
 #7 DONE 0.0s
 
-#5 [internal] load build context
-#5 transferring context: 964B done
-#5 DONE 0.0s
-
-#8 [stage-1 2/4] RUN apk upgrade --no-cache   && apk del --no-cache curl   && apk --purge del apk-tools
+#8 [build 2/6] WORKDIR /app
 #8 CACHED
 
-#9 [stage-1 3/4] COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
+#9 [build 3/6] COPY package.json package-lock.json ./
 #9 CACHED
 
-#10 [build 2/6] WORKDIR /app
+#10 [stage-1 3/4] COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 #10 CACHED
 
-#11 [build 3/6] COPY package.json package-lock.json ./
+#11 [build 4/6] RUN npm ci
 #11 CACHED
 
-#12 [build 4/6] RUN npm ci
+#12 [stage-1 2/4] RUN apk upgrade --no-cache   && apk del --no-cache curl   && apk --purge del apk-tools
 #12 CACHED
 
-#13 [build 6/6] RUN npm run build
+#13 [build 5/6] COPY . .
 #13 CACHED
 
-#14 [build 5/6] COPY . .
+#14 [build 6/6] RUN npm run build
 #14 CACHED
 
 #15 [stage-1 4/4] COPY --from=build /app/dist /usr/share/nginx/html
 #15 CACHED
 
 #16 exporting to image
-#16 exporting layers 0.0s done
-#16 exporting manifest sha256:76fc466f4543… done
-#16 exporting config sha256:f96e5b4d2886… done
-#16 exporting attestation manifest sha256:3a4b0447c42d… 0.0s done
-#16 exporting manifest list sha256:bc524c833ae2…
-#16 exporting manifest list sha256:bc524c833ae2… 0.0s done
-#16 naming to quizappclem.azurecr.io/quiz-frontend:6820d93 done
-#16 unpacking to quizappclem.azurecr.io/quiz-frontend:6820d93 0.0s done
-#16 DONE 0.1s
+#16 exporting layers done
+#16 exporting manifest sha256:8d073db753f2… 0.0s done
+#16 exporting config sha256:7cae9d3cd051…
+#16 exporting config sha256:7cae9d3cd051… 0.0s done
+#16 exporting attestation manifest sha256:6f3c407ce70f… 0.0s done
+#16 exporting manifest list sha256:e718c2b4ed66… 0.0s done
+#16 naming to clemanas.azurecr.io/quiz-frontend:a47334d done
+#16 unpacking to clemanas.azurecr.io/quiz-frontend:a47334d 0.0s done
+#16 DONE 0.2s
 
 ==> Connexion de Docker au registre
 Login Succeeded
 ==> Publication des images
-The push refers to repository [quizappclem.azurecr.io/quiz-backend]
-6820d93: digest: sha256:62baba2aa2d6… size: 856
-The push refers to repository [quizappclem.azurecr.io/quiz-frontend]
-6820d93: digest: sha256:bc524c833ae2… size: 856
+The push refers to repository [clemanas.azurecr.io/quiz-backend]
+a47334d: digest: sha256:3f542326e2c8… size: 856
+The push refers to repository [clemanas.azurecr.io/quiz-frontend]
+a47334d: digest: sha256:e718c2b4ed66… size: 856
 ==> Images présentes dans le registre
-Depot         Tag            Digest                                                                   Date
-------------  -------------  -----------------------------------------------------------------------  ----------------------------
-quiz-backend  6820d93        sha256:62baba2aa2d6…  2026-11-17T11:08:59.0285765Z
-quiz-backend  6820d93-dirty  sha256:27ff099126a6…  2026-11-17T11:08:31.3173547Z
-Depot          Tag            Digest                                                                   Date
--------------  -------------  -----------------------------------------------------------------------  ----------------------------
-quiz-frontend  6820d93        sha256:bc524c833ae2…  2026-11-17T11:09:00.1307261Z
-quiz-frontend  6820d93-dirty  sha256:d31429908c29…  2026-11-17T11:08:35.5042801Z
-Terminé. Images publiées avec le tag 6820d93.
+Depot         Tag      Digest                                                                   Date
+------------  -------  -----------------------------------------------------------------------  ----------------------------
+quiz-backend  a47334d  sha256:3f542326e2c8…  2026-11-17T11:20:32.3998513Z
+Depot          Tag      Digest                                                                   Date
+-------------  -------  -----------------------------------------------------------------------  ----------------------------
+quiz-frontend  a47334d  sha256:e718c2b4ed66…  2026-11-17T11:20:35.3174726Z
+Terminé. Images publiées avec le tag a47334d.

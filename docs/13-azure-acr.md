@@ -11,7 +11,10 @@ Les sorties de commandes sont dans [preuves/J3/](../preuves/J3/).
 | Régions autorisées | `az policy assignment list` | `francecentral`, `italynorth`, `spaincentral`, `norwayeast`, `austriaeast` |
 | Service ACR activé | `az provider show --namespace Microsoft.ContainerRegistry` | `NotRegistered` au départ, activé par le script |
 | Service Container Apps activé | `az provider show --namespace Microsoft.App` | `Registered` |
-| Nom du registre disponible | `az acr check-name --name quizappclem` | Disponible |
+| Nom du registre disponible | `az acr check-name --name clemanas` | Disponible |
+
+Un nom de registre ne contient que des lettres minuscules et des chiffres : `clem_anas` est refusé par `az acr check-name`, d'où `clemanas`.
+Un registre ne peut pas être renommé après sa création.
 
 Restrictions constatées sur l'abonnement étudiant :
 
@@ -23,7 +26,7 @@ Restrictions constatées sur l'abonnement étudiant :
 | Ressource | Nom | Paramètres |
 |---|---|---|
 | Groupe de ressources | `rg-quiz-app` | Région `francecentral` |
-| Registre de conteneurs | `quizappclem` (`quizappclem.azurecr.io`) | Niveau `Basic`, compte administrateur désactivé, accès anonyme désactivé |
+| Registre de conteneurs | `clemanas` (`clemanas.azurecr.io`) | Niveau `Basic`, compte administrateur désactivé, accès anonyme désactivé |
 
 Choix :
 
@@ -81,8 +84,8 @@ L'option `--yes` supprime la confirmation, pour un usage automatisé.
 
 | Image | Tag | Origine du tag |
 |---|---|---|
-| `quizappclem.azurecr.io/quiz-backend` | `6820d93` | Identifiant court du commit Git |
-| `quizappclem.azurecr.io/quiz-frontend` | `6820d93` | Identifiant court du commit Git |
+| `clemanas.azurecr.io/quiz-backend` | `a47334d` | Identifiant court du commit Git |
+| `clemanas.azurecr.io/quiz-frontend` | `a47334d` | Identifiant court du commit Git |
 
 - Le tag est l'identifiant du commit qui a produit l'image : on sait exactement quel code tourne.
 - Le tag `latest` n'est pas utilisé : il ne dit rien du contenu et change à chaque publication.
