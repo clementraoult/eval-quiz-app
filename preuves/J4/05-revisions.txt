@@ -1,0 +1,14 @@
+$ az containerapp revision list --name backend
+Revision          Active    Etat               Sante    Trafic    Replicas    Creation
+----------------  --------  -----------------  -------  --------  ----------  -------------------------
+backend--0000001  True      RunningAtMaxScale  Healthy  100       1           2026-11-17T11:38:23+00:00
+
+$ az containerapp revision list --name frontend
+Revision           Active    Etat     Sante    Trafic    Replicas    Creation
+-----------------  --------  -------  -------  --------  ----------  -------------------------
+frontend--0000001  True      Running  Healthy  100       1           2026-11-17T11:38:56+00:00
+
+$ az containerapp replica list --name backend
+Replica                           Etat     Conteneur    Pret    Redemarrages
+--------------------------------  -------  -----------  ------  --------------
+backend--0000001-7f68db6df-slqfs  Running  backend      True    0

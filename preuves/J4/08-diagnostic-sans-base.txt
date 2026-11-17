@@ -1,0 +1,31 @@
+# Comportement du backend sans base de données (DATABASE_URL non définie), le 17/11/2026 à 12:40.
+
+$ curl https://frontend.salmonwave-d76adf8c.francecentral.azurecontainerapps.io/health
+{"status":"ok"}   -> HTTP 200
+
+$ curl -X POST .../api/admin/login   (identifiants du secret Azure)
+   -> HTTP 200 (jeton reçu, non affiché)
+
+$ curl -X POST .../api/admin/login   (mot de passe par défaut du code : admin123)
+{"error":"Invalid credentials"}   -> HTTP 401
+
+$ curl -X POST .../api/users   (inscription : nécessite la base)
+{"error":"Internal server error"}   -> HTTP 500
+
+$ az containerapp logs show --name backend --tail 30
+2026-11-17T11:38:42.2171804Z stdout F Server running on port 3007
+2026-11-17T11:40:51.3768394Z stderr F Error creating user: Error: connect ECONNREFUSED 127.0.0.1:5432
+2026-11-17T11:40:51.3768744Z stderr F     at /app/node_modules/pg-pool/index.js:45:11
+2026-11-17T11:40:51.3768860Z stderr F     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+2026-11-17T11:40:51.3768878Z stderr F     at async file:///app/server.js:284:20 {
+2026-11-17T11:40:51.3768890Z stderr F   errno: -111,
+2026-11-17T11:40:51.3768901Z stderr F   code: 'ECONNREFUSED',
+2026-11-17T11:40:51.3768913Z stderr F   syscall: 'connect',
+2026-11-17T11:40:51.3768924Z stderr F   address: '127.0.0.1',
+2026-11-17T11:40:51.3768939Z stderr F   port: 5432
+2026-11-17T11:40:51.3768949Z stderr F }
+
+$ az containerapp replica list --name backend   # le backend ne redémarre pas
+Etat     Pret    Redemarrages
+-------  ------  --------------
+Running  True    0

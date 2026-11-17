@@ -1,0 +1,14 @@
+$ az containerapp show --name backend   # variables : les secrets sont des références
+Variable        Valeur    Secret
+--------------  --------  --------------
+ADMIN_USERNAME  admin
+ADMIN_PASSWORD            admin-password
+JWT_SECRET                jwt-secret
+RESEND_API_KEY            resend-api-key
+
+$ az containerapp secret list --name backend   # noms seulement, aucune valeur
+Secret
+--------------
+admin-password
+jwt-secret
+resend-api-key

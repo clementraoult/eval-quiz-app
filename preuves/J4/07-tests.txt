@@ -1,0 +1,24 @@
+# Tests réalisés le 17/11/2026 à 12:40 depuis le poste de développement.
+
+$ curl -i https://frontend.salmonwave-d76adf8c.francecentral.azurecontainerapps.io/health   # Internet -> frontend (nginx) -> backend:3007
+HTTP/2 200 
+content-type: application/json; charset=utf-8
+{"status":"ok"}
+
+
+$ curl -I https://frontend.salmonwave-d76adf8c.francecentral.azurecontainerapps.io/
+HTTP/2 200 
+content-type: text/html
+
+$ curl -I https://frontend.salmonwave-d76adf8c.francecentral.azurecontainerapps.io/gestion-quiz
+HTTP/2 200 
+content-type: text/html
+
+$ curl -I http://frontend.salmonwave-d76adf8c.francecentral.azurecontainerapps.io/   # HTTP redirigé vers HTTPS
+HTTP/1.1 301 Moved Permanently
+location: https://frontend.salmonwave-d76adf8c.francecentral.azurecontainerapps.io/
+
+$ curl https://backend.internal.salmonwave-d76adf8c.francecentral.azurecontainerapps.io/health   # backend injoignable depuis Internet
+HTTP 404
+$ curl https://backend.salmonwave-d76adf8c.francecentral.azurecontainerapps.io/health
+HTTP 404

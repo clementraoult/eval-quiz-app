@@ -1,0 +1,27 @@
+$ az containerapp show --name backend   # image, registre, identité, ressources
+{
+  "authentificationRegistre": "system",
+  "cpu": 0.25,
+  "identite": "SystemAssigned",
+  "image": "clemanas.azurecr.io/quiz-backend:27bad84",
+  "memoire": "0.5Gi",
+  "registre": "clemanas.azurecr.io",
+  "replicasMax": 1,
+  "replicasMin": 1
+}
+
+$ az containerapp show --name frontend   # image, registre, identité, ressources
+{
+  "authentificationRegistre": "system",
+  "cpu": 0.25,
+  "identite": "SystemAssigned",
+  "image": "clemanas.azurecr.io/quiz-frontend:27bad84",
+  "memoire": "0.5Gi",
+  "registre": "clemanas.azurecr.io",
+  "replicasMax": 2,
+  "replicasMin": 0
+}
+
+$ az role assignment list --scope <registre clemanas>   # droit de tirer les images
+backend : AcrPull
+frontend : AcrPull
