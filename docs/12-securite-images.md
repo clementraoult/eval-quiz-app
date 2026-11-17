@@ -135,6 +135,22 @@ resend 2.1.0
 
 Action recommandée à l'équipe de développement : mettre à jour `resend` vers une version qui ne dépend plus de `js-beautify`.
 
+### Correction complémentaire : mise à jour de `resend`
+
+Cette action a été réalisée après le jalon, dans une Pull Request dédiée (branche `feature/j2-resend`).
+
+| Élément | Avant | Après |
+|---|---|---|
+| `resend` (dépendance directe du backend) | 2.1.0 | 6.38.1 |
+| `@react-email/render` → `pretty` → `js-beautify` | installés | absents : `@react-email/render` est devenue une dépendance optionnelle de `resend` |
+| `glob` 10.5.0, `minimatch` 9.0.9 | présents (2 MEDIUM) | absents |
+| `npm audit --omit=dev` | 4 moderate | 0 |
+
+- Seule `resend` change de version : les autres dépendances du `package-lock.json` restent identiques.
+- L'API utilisée par le backend ne change pas : `resend.emails.send({ from, to, subject, html })` renvoie toujours `{ data, error }`, déjà traité par `server.js`.
+- Vérifications : démarrage du backend et `/health` en local, puis CI de la Pull Request (build, scan Trivy, test de la stack Docker Compose).
+- Preuves : [preuves/J2/05-npm-audit-backend-resend6.txt](../preuves/J2/05-npm-audit-backend-resend6.txt) et le rapport Trivy du backend produit par la CI de la Pull Request.
+
 ## 6. Limites et suite
 
 - Un scan reflète la base de vulnérabilités du jour. Une image à zéro aujourd'hui aura des vulnérabilités connues demain, sans avoir changé. Les images doivent être reconstruites et rescannées régulièrement.
