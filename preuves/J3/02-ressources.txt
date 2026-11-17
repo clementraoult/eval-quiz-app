@@ -1,0 +1,24 @@
+$ az group show --name rg-quiz-app
+Nom          Region         Etat
+-----------  -------------  ---------
+rg-quiz-app  francecentral  Succeeded
+
+$ az resource list --resource-group rg-quiz-app
+Nom          Ressource                               Region
+-----------  --------------------------------------  -------------
+quizappclem  Microsoft.ContainerRegistry/registries  francecentral
+
+$ az acr show --name quizappclem
+Nom          Serveur                 Sku    CompteAdmin    AccesPublicAnonyme    Etat       Creation
+-----------  ----------------------  -----  -------------  --------------------  ---------  --------------------------------
+quizappclem  quizappclem.azurecr.io  Basic  False          False                 Succeeded  2026-11-17T11:08:13.252195+00:00
+
+$ az provider show --namespace Microsoft.ContainerRegistry
+Service                      Etat
+---------------------------  ----------
+Microsoft.ContainerRegistry  Registered
+
+$ az policy assignment list   # régions autorisées par l abonnement
+Strategie                            Regions
+-----------------------------------  ----------------------------------------------------------------
+Allowed resource deployment regions  francecentral, italynorth, spaincentral, norwayeast, austriaeast
