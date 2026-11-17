@@ -1,0 +1,26 @@
+$ az acr repository list --name quizappclem
+Result
+-------------
+quiz-backend
+quiz-frontend
+
+$ az acr repository show-tags --name quizappclem --repository quiz-backend --detail
+Tag      Digest                                                                   Date
+-------  -----------------------------------------------------------------------  ----------------------------
+6820d93  sha256:62baba2aa2d632533be4522ac4b83b0caf227f6d35395b816d89ed9df4d67e1e  2026-11-17T11:08:59.0285765Z
+
+$ az acr repository show-tags --name quizappclem --repository quiz-frontend --detail
+Tag      Digest                                                                   Date
+-------  -----------------------------------------------------------------------  ----------------------------
+6820d93  sha256:bc524c833ae25a86cb5a46934f89b2e9e241bae1e54ab929ac0ad4ae26949176  2026-11-17T11:09:00.1307261Z
+
+$ git log -1 --format="%h %s"   # le tag des images est ce commit
+6820d93 feat: scripts Azure CLI pour ACR (J3)
+
+$ docker image inspect quizappclem.azurecr.io/quiz-backend:6820d93   # label de traçabilité
+{"org.opencontainers.image.revision":"6820d93d9cafa903d67ce7cf5a55b9bd0dbf86a2","org.opencontainers.image.title":"quiz-backend"}
+
+$ az acr show-usage --name quizappclem
+Element    Utilise    Limite       Unite
+---------  ---------  -----------  -------
+Size       96714129   10737418240  Bytes
