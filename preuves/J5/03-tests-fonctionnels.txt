@@ -1,0 +1,13 @@
+# Tests fonctionnels sur Azure avec PostgreSQL Neon, le 17/11/2026 à 13:47.
+# Application : https://frontend.salmonwave-d76adf8c.francecentral.azurecontainerapps.io
+
+$ curl -X POST .../api/users   # inscription
+{"id":1,"firstname":"TestJ5","email":"test-j5@example.com"}
+   -> HTTP 201
+
+$ curl -X POST .../api/results   # enregistrement d un résultat de quiz
+{"message":"Results saved and email sent","quizResultId":1}
+   -> HTTP 201
+
+$ curl .../api/admin/results   # lecture par l administration (jeton JWT non affiché)
+{"results": [{"email": "test-j5@example.com", "firstname": "TestJ5", "attempts": "1", "best_score": 2, "total_questions": 2, "avg_score": "2.0", "last_attempt": "2026-11-17T12:47:29.425Z"}], "total": 1}

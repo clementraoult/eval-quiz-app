@@ -39,6 +39,9 @@ read_secret() {
   if [ -z "$value" ] && [ -f "$ROOT/$AZURE_ENV_FILE" ]; then
     value="$(grep -E "^${name}=" "$ROOT/$AZURE_ENV_FILE" | tail -n 1 | cut -d= -f2- || true)"
   fi
+  # Retire d'éventuels guillemets autour de la valeur (format de certains fournisseurs).
+  value="${value%\"}"; value="${value#\"}"
+  value="${value%\'}"; value="${value#\'}"
   printf '%s' "$value"
 }
 

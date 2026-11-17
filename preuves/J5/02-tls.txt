@@ -1,0 +1,21 @@
+# Connexion chiffrée à PostgreSQL, le 17/11/2026 à 13:47. La chaîne de connexion n'est jamais affichée.
+
+$ psql "$DATABASE_URL" -c "\conninfo"   # DATABASE_URL contient sslmode=require
+ Database             | neondb
+ Server Port          | 5432
+ Protocol Version     | 3.0
+ SSL Connection       | true
+ SSL Library          | OpenSSL
+ SSL Protocol         | TLSv1.3
+ SSL Key Bits         | 256
+ SSL Cipher           | TLS_AES_256_GCM_SHA384
+ SSL Compression      | false
+
+# Même serveur, en demandant une connexion non chiffrée (sslmode=disable) : refusée.
+$ psql "<même chaîne avec sslmode=disable>" -c "select 1"
+psql: error: connection to server at "<hôte Neon masqué>", port 5432 failed: ERROR:  connection is insecure (try using `sslmode=require`)
+
+# Pilote du backend : pg (node-postgres). sslmode=require dans DATABASE_URL active TLS.
+$ grep version backend/package-lock.json (pg)
+pg 8.23.1
+pg-connection-string 2.14.1

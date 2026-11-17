@@ -1,0 +1,33 @@
+# Persistance, le 17/11/2026 à 13:47.
+
+--- AVANT : contenu de la base Neon (psql)
+ users | quiz_results | answers 
+-------+--------------+---------
+     2 |            1 |       2
+(1 row)
+
+--- AVANT : résultats vus par l application
+{"results": [{"email": "test-j5@example.com", "firstname": "TestJ5", "attempts": "1", "best_score": 2, "total_questions": 2, "avg_score": "2.0", "last_attempt": "2026-11-17T12:47:29.425Z"}], "total": 1}
+
+$ az containerapp replica list --name backend   # réplica avant redémarrage
+Replica                           Creation
+--------------------------------  --------------------
+backend--0000002-759c7665c-9kmvj  2026-11-17T12:46:33Z
+
+$ az containerapp revision restart --name backend --revision backend--0000002
+"Restart succeeded"
+
+$ az containerapp replica list --name backend   # nouveau réplica : le conteneur a été recréé
+Replica                            Creation              Etat
+---------------------------------  --------------------  ----------
+backend--0000002-75696f4844-lxkgq  2026-11-17T12:47:58Z  Running
+backend--0000002-759c7665c-9kmvj   2026-11-17T12:46:33Z  NotRunning
+
+--- APRÈS : contenu de la base Neon (psql)
+ users | quiz_results | answers 
+-------+--------------+---------
+     2 |            1 |       2
+(1 row)
+
+--- APRÈS : résultats vus par l application
+{"results": [{"email": "test-j5@example.com", "firstname": "TestJ5", "attempts": "1", "best_score": 2, "total_questions": 2, "avg_score": "2.0", "last_attempt": "2026-11-17T12:47:29.425Z"}], "total": 1}
