@@ -1,12 +1,12 @@
 # Le registre est privé : sans authentification, le téléchargement est refusé.
-$ docker logout quizappclem.azurecr.io
-Removing login credentials for quizappclem.azurecr.io
-$ docker pull quizappclem.azurecr.io/quiz-backend:6820d93
-Error response from daemon: error from registry: authentication required, visit https://aka.ms/acr/authorization for more information. CorrelationId: 657f3ea3-7350-4d4c-8c75-71a9d2dd655f
+$ docker logout clemanas.azurecr.io
+Removing login credentials for clemanas.azurecr.io
+$ docker pull clemanas.azurecr.io/quiz-backend:a47334d
+Error response from daemon: error from registry: authentication required, visit https://aka.ms/acr/authorization for more information.
 
 # Avec authentification Azure (jeton temporaire), le téléchargement fonctionne.
-$ az acr login --name quizappclem
+$ az acr login --name clemanas
 Login Succeeded
-$ docker pull quizappclem.azurecr.io/quiz-backend:6820d93
-Status: Downloaded newer image for quizappclem.azurecr.io/quiz-backend:6820d93
-quizappclem.azurecr.io/quiz-backend:6820d93
+$ docker pull clemanas.azurecr.io/quiz-backend:a47334d
+Status: Downloaded newer image for clemanas.azurecr.io/quiz-backend:a47334d
+clemanas.azurecr.io/quiz-backend:a47334d

@@ -28,7 +28,7 @@ fi
 echo "Abonnement : $(az account show --query name -o tsv)"
 echo "Ressources qui seront supprimées dans $RESOURCE_GROUP :"
 az resource list --resource-group "$RESOURCE_GROUP" \
-  --query "[].{nom:name, type:type, region:location}" -o table
+  --query "[].{nom:name, ressource:type, region:location}" -o table
 
 if [ "${1:-}" != "--yes" ]; then
   echo

@@ -12,7 +12,7 @@ LOCATION="${LOCATION:-francecentral}"
 
 # Registre de conteneurs. Le nom est unique dans tout Azure :
 # 5 à 50 caractères, lettres minuscules et chiffres uniquement.
-ACR_NAME="${ACR_NAME:-quizappclem}"
+ACR_NAME="${ACR_NAME:-clemanas}"
 
 # Niveau de service du registre : Basic est le moins cher.
 ACR_SKU="${ACR_SKU:-Basic}"

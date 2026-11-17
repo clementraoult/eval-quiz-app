@@ -1,26 +1,26 @@
-$ az acr repository list --name quizappclem
+$ az acr repository list --name clemanas
 Result
 -------------
 quiz-backend
 quiz-frontend
 
-$ az acr repository show-tags --name quizappclem --repository quiz-backend --detail
+$ az acr repository show-tags --name clemanas --repository quiz-backend --detail
 Tag      Digest                                                                   Date
 -------  -----------------------------------------------------------------------  ----------------------------
-6820d93  sha256:62baba2aa2d632533be4522ac4b83b0caf227f6d35395b816d89ed9df4d67e1e  2026-11-17T11:08:59.0285765Z
+a47334d  sha256:3f542326e2c83a544aacdaec0cd9145a812d5f295837022cc0e584ca319fa329  2026-11-17T11:20:32.3998513Z
 
-$ az acr repository show-tags --name quizappclem --repository quiz-frontend --detail
+$ az acr repository show-tags --name clemanas --repository quiz-frontend --detail
 Tag      Digest                                                                   Date
 -------  -----------------------------------------------------------------------  ----------------------------
-6820d93  sha256:bc524c833ae25a86cb5a46934f89b2e9e241bae1e54ab929ac0ad4ae26949176  2026-11-17T11:09:00.1307261Z
+a47334d  sha256:e718c2b4ed66da0b01e1fe01d20ecbb1661d2541296435c6135e1d7314f8ac74  2026-11-17T11:20:35.3174726Z
 
 $ git log -1 --format="%h %s"   # le tag des images est ce commit
-6820d93 feat: scripts Azure CLI pour ACR (J3)
+a47334d chore: renommer le registre ACR en clemanas
 
-$ docker image inspect quizappclem.azurecr.io/quiz-backend:6820d93   # label de traçabilité
-{"org.opencontainers.image.revision":"6820d93d9cafa903d67ce7cf5a55b9bd0dbf86a2","org.opencontainers.image.title":"quiz-backend"}
+$ docker image inspect clemanas.azurecr.io/quiz-backend:a47334d   # label de traçabilité
+{"org.opencontainers.image.revision":"a47334dad778821df8e5a45ff577f84948b32bac","org.opencontainers.image.title":"quiz-backend"}
 
-$ az acr show-usage --name quizappclem
+$ az acr show-usage --name clemanas
 Element    Utilise    Limite       Unite
 ---------  ---------  -----------  -------
-Size       96714129   10737418240  Bytes
+Size       96709779   10737418240  Bytes
