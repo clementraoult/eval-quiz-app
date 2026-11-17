@@ -1,0 +1,10 @@
+$ npm ls resend
+`-- resend@6.38.1
+
+
+$ npm ls js-beautify glob minimatch --omit=dev
+`-- (empty)
+
+
+$ npm audit --omit=dev
+found 0 vulnerabilities
