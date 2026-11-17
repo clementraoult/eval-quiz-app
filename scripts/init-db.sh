@@ -32,6 +32,10 @@ command -v docker >/dev/null || fail "Docker est introuvable."
 if [ -z "${DATABASE_URL:-}" ] && [ -f "$ROOT/$AZURE_ENV_FILE" ]; then
   DATABASE_URL="$(grep -E '^DATABASE_URL=' "$ROOT/$AZURE_ENV_FILE" | tail -n 1 | cut -d= -f2- || true)"
 fi
+# Retire d'éventuels guillemets autour de la valeur (format de certains fournisseurs).
+DATABASE_URL="${DATABASE_URL:-}"
+DATABASE_URL="${DATABASE_URL%\"}"; DATABASE_URL="${DATABASE_URL#\"}"
+DATABASE_URL="${DATABASE_URL%\'}"; DATABASE_URL="${DATABASE_URL#\'}"
 [ -n "${DATABASE_URL:-}" ] || fail "DATABASE_URL est vide. La renseigner dans $AZURE_ENV_FILE."
 export DATABASE_URL
 
