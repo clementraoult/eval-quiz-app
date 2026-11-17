@@ -1,0 +1,17 @@
+$ scripts/setup-github-oidc.sh
+
+$ az identity show --name id-quiz-github
+Nom             Region
+--------------  -------------
+id-quiz-github  francecentral
+
+$ az identity federated-credential list --identity-name id-quiz-github
+Nom          Emetteur                                     Sujet
+-----------  -------------------------------------------  ----------------------------------------------------
+github-main  https://token.actions.githubusercontent.com  repo:clementraoult/eval-quiz-app:ref:refs/heads/main
+
+$ az role assignment list --assignee <identité> --all   # droits du pipeline
+Reader     <abonnement>/resourceGroups/rg-quiz-app                                                                         
+AcrPush    <abonnement>/resourceGroups/rg-quiz-app/providers/Microsoft.ContainerRegistry/registries/clemanas               
+Container  Apps                                                                                               Contributor  <abonnement>/resourceGroups/rg-quiz-app/providers/Microsoft.App/containerapps/backend
+Container  Apps                                                                                               Contributor  <abonnement>/resourceGroups/rg-quiz-app/providers/Microsoft.App/containerapps/frontend

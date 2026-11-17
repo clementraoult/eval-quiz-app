@@ -1,0 +1,136 @@
+# CI : contrôles exécutés sur chaque Pull Request vers main.
+#
+# - construit les images du frontend et du backend ;
+# - les analyse avec Trivy : une vulnérabilité CRITICAL fait échouer le job ;
+# - démarre la stack complète avec Docker Compose et teste le parcours principal.
+#
+# Ce workflow n'utilise aucun secret et ne déploie rien : il peut s'exécuter sur
+# du code non encore relu. Les jobs sont à déclarer comme contrôles obligatoires
+# dans la protection de la branche main.
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+# Droits du jeton GitHub réduits à la lecture du code.
+permissions:
+  contents: read
+
+# Un nouveau commit sur la même Pull Request annule l'exécution précédente.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-scan:
+    name: Build et scan Trivy (${{ matrix.service }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      # Les deux images sont toujours analysées, même si l'une échoue.
+      fail-fast: false
+      matrix:
+        include:
+          - service: backend
+            context: ./backend
+          - service: frontend
+            context: .
+    steps:
+      # Actions épinglées par identifiant de commit : un tag peut être déplacé, pas un commit.
+      - name: Récupération du code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Construction de l'image
+        run: docker build -t "quiz-${{ matrix.service }}:ci" "${{ matrix.context }}"
+
+      # Le script se termine en erreur si Trivy trouve une vulnérabilité CRITICAL.
+      # Pas de continue-on-error : l'échec du scan fait échouer le job.
+      - name: Scan Trivy (bloquant sur CRITICAL)
+        env:
+          SCAN_OUTPUT_DIR: ${{ runner.temp }}/trivy
+        run: scripts/scan-trivy.sh ci "quiz-${{ matrix.service }}:ci"
+
+      - name: Résumé du scan
+        if: always()
+        run: |
+          report="${{ runner.temp }}/trivy/scan-ci-${{ matrix.service }}.txt"
+          {
+            echo "### Trivy : ${{ matrix.service }}"
+            echo
+            if [ -f "$report" ]; then
+              echo '```'
+              grep -E '^Total:' "$report" || echo "Total: 0 (aucune vulnérabilité)"
+              echo '```'
+            else
+              echo "Rapport absent : l'image n'a pas pu être construite ou analysée."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Rapport Trivy complet
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: trivy-${{ matrix.service }}
+          path: ${{ runner.temp }}/trivy/
+          if-no-files-found: warn
+
+  test-stack:
+    name: Test de la stack Docker Compose
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Valeurs jetables, générées pour cette exécution : aucun secret réel.
+      - name: Configuration de test
+        run: |
+          {
+            echo "POSTGRES_USER=quiz_user"
+            echo "POSTGRES_PASSWORD=$(openssl rand -hex 16)"
+            echo "POSTGRES_DB=quiz_db"
+            echo "RESEND_API_KEY=re_placeholder"
+            echo "ADMIN_USERNAME=admin"
+            echo "ADMIN_PASSWORD=$(openssl rand -hex 16)"
+            echo "JWT_SECRET=$(openssl rand -hex 32)"
+            echo "FRONTEND_PORT=8087"
+          } > .env
+
+      # --wait : attend que les trois services soient "healthy".
+      - name: Démarrage de la stack
+        run: docker compose up -d --build --wait --wait-timeout 180
+
+      - name: Test du parcours principal
+        run: |
+          set -euo pipefail
+          base=http://localhost:8087
+
+          echo "Santé du backend à travers nginx"
+          test "$(curl -fsS "$base/health")" = '{"status":"ok"}'
+
+          echo "Pages du frontend"
+          curl -fsS -o /dev/null "$base/"
+          curl -fsS -o /dev/null "$base/gestion-quiz"
+
+          echo "Inscription (écriture en base)"
+          curl -fsS -X POST "$base/api/users" -H 'Content-Type: application/json' \
+            -d '{"firstname":"CI","email":"ci@example.com"}' | grep -q '"id":1'
+
+          echo "Le mot de passe par défaut du code est refusé"
+          code="$(curl -s -o /dev/null -w '%{http_code}' -X POST "$base/api/admin/login" \
+            -H 'Content-Type: application/json' -d '{"username":"admin","password":"admin123"}')"
+          test "$code" = "401"
+
+      - name: Journaux en cas d'échec
+        if: failure()
+        run: docker compose logs --no-color --tail 100
+
+      - name: Arrêt de la stack
+        if: always()
+        run: docker compose down -v
